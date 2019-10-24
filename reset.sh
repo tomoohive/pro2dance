@@ -1,3 +1,3 @@
 #/bin/bash
 
-rm -rf VisBeatAssets ./ProdanceAssets/* ./SplitDanceferAssets/* ./*.mp4 ./*.mp3
+rm -rf VisBeatAssets ./*.json ./*.mp4 ./*.mp3

@@ -21,7 +21,7 @@ class DanceMusic:
         self.audio_path = audio_dir + "/Audio.mp3"
         os.chdir(current_dir)
         if not os.path.exists(self.audio_path):
-            cmd = "ffmpeg -i " + file_path + " -ac 2 -ar 44100 -b:a 128K -f mp3 " + self.audio_path
+            cmd = "ffmpeg -i '" + file_path + "' -ac 2 -ar 44100 -b:a 128K -f mp3 " + self.audio_path
             subprocess.call(cmd, shell=True)
         else:
             print 'Audio File is Exist.'
