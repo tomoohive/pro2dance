@@ -69,8 +69,8 @@ class DanceVideo:
             weight_sum = reduce(lambda sum, beat_data: sum + beat_data.weight, split_beats_data, 0)
             beats_average_datum = {
                 'index': i,
-                'start_frame_file': "image_" + str(split_beats_data[0].start_frame) + ".png",
-                'end_frame_file': "image_" + str(split_beats_data[-1].end_frame) + ".png",
+                'start_frame_file': self.png_dir + "/" + "image_" + str(split_beats_data[0].start_frame) + ".png",
+                'end_frame_file': self.png_dir + "/" + "image_" + str(split_beats_data[-1].end_frame) + ".png",
                 'vbeats': weight_sum/8}
             beats_average_data.append(beats_average_datum)
         return beats_average_data
@@ -78,8 +78,7 @@ class DanceVideo:
     def dumpDictToJSON8BeatsAverage(self, file_path):
         beats_average_data = self.extractVisualBeatsData8BeatsAverage()
         result = {
-            'beats_data': beats_average_data,
-            'dir_path': self.png_dir + '/'
+            'beats_data': beats_average_data
         }
         fw = open(file_path, 'w')
         json.dump(result, fw, indent=2)
