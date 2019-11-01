@@ -2,6 +2,8 @@ import os, time
 import numpy as np
 import sys
 import subprocess
+import matplotlib
+matplotlib.use('Agg')
 import visbeat
 from DanceVideo import *
 from DanceMusic import *

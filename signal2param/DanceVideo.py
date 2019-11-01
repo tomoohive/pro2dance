@@ -2,6 +2,7 @@ import visbeat
 import os
 import subprocess
 import json
+import numpy as np
 
 class DanceVideo:
     def __init__(self, source_video):
@@ -75,10 +76,26 @@ class DanceVideo:
             beats_average_data.append(beats_average_datum)
         return beats_average_data
 
+    def min_max(self, x, axis = None):
+        min = x.min(axis=axis, keepdims=True)
+        max = x.max(axis=axis, keepdims=True)
+        result = (x-min)/(max-min)
+        return result
+
+    def standardizationVisualBeats(self, beats_data):
+        standardization_data = np.array([])
+        for beat_data in beats_data:
+            standardization_data = np.append(standardization_data, beat_data['vbeats'])
+        standardization_data = self.min_max(standardization_data)
+        for idx, standardization_datum in enumerate(standardization_data):
+            beats_data[idx]['vbeats'] = standardization_datum
+        return beats_data
+
     def dumpDictToJSON8BeatsAverage(self, file_path):
         beats_average_data = self.extractVisualBeatsData8BeatsAverage()
+        beats_average_data_result = self.standardizationVisualBeats(beats_data = beats_average_data)
         result = {
-            'beats_data': beats_average_data
+            'beats_data': beats_average_data_result
         }
         fw = open(file_path, 'w')
         json.dump(result, fw, indent=2)
