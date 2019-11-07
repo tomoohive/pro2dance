@@ -71,6 +71,8 @@ class DanceVideo:
             beats_average_datum = {
                 'index': i,
                 'frames': split_beats_data[-1].end_frame - split_beats_data[0].start_frame,
+                'start_number': split_beats_data[0].start_frame,
+                'file_path': self.png_dir + '/image_%d.png',
                 'start_frame_file': self.png_dir + "/" + "image_" + str(split_beats_data[0].start_frame) + ".png",
                 'end_frame_file': self.png_dir + "/" + "image_" + str(split_beats_data[-1].end_frame) + ".png",
                 'vbeats': weight_sum/8}

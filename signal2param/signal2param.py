@@ -8,8 +8,10 @@ import visbeat
 from DanceVideo import *
 from DanceMusic import *
 
-SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=kS_DvUlrukk'
-TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=prPjpwsGiws'
+# SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=kS_DvUlrukk'
+SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=ZfICRzbt-ZY'
+# TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=prPjpwsGiws'
+TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=VdXZaGGWe3Y'
 
 class SourceMedia:
     def __init__(self, path, name=None, **kwargs):

@@ -3,3 +3,7 @@ VisBeatAssets
 *.pyc
 *.json
 *.png
+Pro2DanceOutput/*.mp4
+*.txt
+results
+*.mp4
