@@ -12,16 +12,15 @@ class DancePose:
         json_data = json.load(f)
         return json_data
 
-    def deleteNonePoseData(self, json_data):
-        tmp_json_data = json_data
-        for idx, json_datum in enumerate(json_data['beats_data']):
-            if json_datum['start_frame_pos'] == None or json_datum['end_frame_pos'] == None:
-                del tmp_json_data['beats_data'][idx]
-        return tmp_json_data
+    def deleteNonePoseData(self, beats_data):
+        for beat_data in beats_data[:]:
+            if beat_data['start_frame_pos'] is None or beat_data['end_frame_pos'] is None:
+                beats_data.remove(beat_data)
+        return {'beats_data': beats_data}
 
     def getDancePoseData(self):
         result_json = energy.calculateHumanPoseFrame(self.visual_beats)
-        return self.deleteNonePoseData(result_json)
+        return self.deleteNonePoseData(result_json['beats_data'])
     
     def dumpDictToJSONDancePoseData(self, file_path):
         result = self.getDancePoseData()

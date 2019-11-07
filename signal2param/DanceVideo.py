@@ -70,6 +70,7 @@ class DanceVideo:
             weight_sum = reduce(lambda sum, beat_data: sum + beat_data.weight, split_beats_data, 0)
             beats_average_datum = {
                 'index': i,
+                'frames': split_beats_data[-1].end_frame - split_beats_data[0].start_frame,
                 'start_frame_file': self.png_dir + "/" + "image_" + str(split_beats_data[0].start_frame) + ".png",
                 'end_frame_file': self.png_dir + "/" + "image_" + str(split_beats_data[-1].end_frame) + ".png",
                 'vbeats': weight_sum/8}
