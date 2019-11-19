@@ -19,7 +19,7 @@ class MetropolisHastings:
         return json_data
 
     def P(self, e_param):
-        T = 0.001
+        T = 0.25
         return np.exp(-e_param/T)
 
     def setVisualBeatsData(self, Y_video):

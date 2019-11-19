@@ -12,16 +12,17 @@ def loadJSON(audio_json_path, visual_json_path):
 def calculatePoseSimiler(judgement_human_pos, target):
     d = 0
     for i in judgement_human_pos.keys() & target.keys():
-        d += (abs(target[str(i)][0] - judgement_human_pos[str(i)][0]) \
-            + abs(target[str(i)][1] - judgement_human_pos[str(i)][1]))
-    d += len(set(judgement_human_pos.keys()).symmetric_difference(target.keys()))
-    return d/18
+        a = np.array(target[str(i)])
+        b = np.array(judgement_human_pos[str(i)])
+        d += np.linalg.norm(a-b)
+    return d
 
 def E_beat(X_audio, Y_video):
     variance_value = np.array([])
     for audio_beat, visual_beat in zip(X_audio, Y_video):
         variance_value = np.append(variance_value, audio_beat['abeats'] - visual_beat['vbeats'])
-    return (np.std(variance_value))
+    mse = (np.square(variance_value)).mean()
+    return mse
 
 def E_pose(Y_video):
     variance_value = np.array([])
@@ -31,13 +32,14 @@ def E_pose(Y_video):
         else:
             result = calculatePoseSimiler(Y_video[i]['end_frame_pos'],Y_video[i+1]['start_frame_pos'])
             variance_value = np.append(variance_value, result)
-    return np.std(variance_value)
+    mse = (np.square(variance_value)).mean()
+    return mse
 
 def calculateEnergyFunction(X_audio, Y_video):
     a = E_beat(X_audio, Y_video)
     b = E_pose(Y_video)
-    # print(a,b)
-    return a+10*b
+    print(a,b)
+    return 10*a+b
 
 # audio_beats, visual_beats = loadJSON('AudioBeatsData8BeatsAverage.json','OptimizedData.json')
 # print(E_beat(audio_beats['beats_data'], visual_beats['beats_data']))

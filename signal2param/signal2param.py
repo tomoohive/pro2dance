@@ -10,8 +10,12 @@ from DanceMusic import *
 
 # SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=kS_DvUlrukk'
 SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=ZfICRzbt-ZY'
+# SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=zWvShbUpYHY'
 # TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=prPjpwsGiws'
-TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=VdXZaGGWe3Y'
+# TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=VdXZaGGWe3Y'
+# TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=ZbZSe6N_BXs'
+# TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=8wYzN_O9XlU'
+TARGET_VIDEO_URL = 'https://www.youtube.com/watch?v=_NNYI8VbFyY'
 
 class SourceMedia:
     def __init__(self, path, name=None, **kwargs):

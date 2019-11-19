@@ -1,8 +1,13 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import visbeat
 import os
 import subprocess
 import json
 import numpy as np
+import pprint
+
 
 class DanceVideo:
     def __init__(self, source_video):
@@ -36,25 +41,52 @@ class DanceVideo:
             f = self.num_frames_total - 1
         return int(f)
 
-    def addFrameNumberToVisualBeatsData(self, beats_data):
-        setattr(beats_data[0], 'start_frame', 1)
-        for i in range(len(beats_data)):
+    def getNearestValue(self, time_list, num):
+        idx = np.abs(np.asarray(time_list) - num).argmin()
+        return idx
+    
+    def getTimeList(self, beats_data):
+        time_list = []
+        for beat_data in beats_data:
+            time_list.append(beat_data.start)
+        return time_list
+
+    def addFrameNumberToVisualBeatsData(self, beats_data, audio_data):
+        time_list = self.getTimeList(beats_data)
+        for i in range(len(audio_data)):
             if(i == 0):
-                end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
-                setattr(beats_data[i], 'end_frame', end_frame)
-                setattr(beats_data[i+1], 'start_frame', end_frame + 1)
-            elif(i == len(beats_data)-1):
-                end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
-                setattr(beats_data[i], 'end_frame', end_frame)
+                start_frame = self.getFrameNumber(audio_data[i].start * self.sampling_rate)
+                setattr(audio_data[i], 'start_frame', start_frame)
+            elif(i == len(audio_data)-1):
+                start_frame = self.getFrameNumber(audio_data[i].start * self.sampling_rate)
+                setattr(audio_data[i], 'start_frame', start_frame)
+                setattr(audio_data[i], 'end_frame', self.num_frames_total)
             else:
-                end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
-                setattr(beats_data[i], 'end_frame', end_frame)
-                setattr(beats_data[i+1], 'start_frame', end_frame + 1)
-        return beats_data
+                start_frame = self.getFrameNumber(audio_data[i].start * self.sampling_rate)
+                setattr(audio_data[i], 'start_frame', start_frame)
+                setattr(audio_data[i-1], 'end_frame', start_frame - 1)
+            weight = beats_data[self.getNearestValue(time_list, audio_data[i].start)].weight
+            setattr(audio_data[i], 'weight', weight)
+        return audio_data
+        # setattr(beats_data[0], 'start_frame', 1)
+        # for i in range(len(beats_data)):
+        #     if(i == 0):
+        #         end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
+        #         setattr(beats_data[i], 'end_frame', end_frame)
+        #         setattr(beats_data[i+1], 'start_frame', end_frame + 1)
+        #     elif(i == len(beats_data)-1):
+        #         end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
+        #         setattr(beats_data[i], 'end_frame', end_frame)
+        #     else:
+        #         end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
+        #         setattr(beats_data[i], 'end_frame', end_frame)
+        #         setattr(beats_data[i+1], 'start_frame', end_frame + 1)
+        # return beats_data
 
     def extractVisualBeatsData(self):
         beats_data = self.source_video.getVisualBeats()
-        return self.addFrameNumberToVisualBeatsData(beats_data)
+        audio_data = self.source_video.audio.getBeatEvents()
+        return self.addFrameNumberToVisualBeatsData(beats_data, audio_data)
 
     def split_list(self, l, n):
         for idx in range(0, len(l), n):
@@ -67,7 +99,7 @@ class DanceVideo:
         splits_beats_data = self.split_list(self.extractVisualBeatsData(), 8)
         beats_average_data = []
         for i, split_beats_data in enumerate(splits_beats_data):
-            weight_sum = reduce(lambda sum, beat_data: sum + beat_data.weight, split_beats_data, 0)
+            weight_sum = reduce(lambda sum, beat_data: sum + abs(beat_data.weight), split_beats_data, 0)
             beats_average_datum = {
                 'index': i,
                 'frames': split_beats_data[-1].end_frame - split_beats_data[0].start_frame,
@@ -102,4 +134,29 @@ class DanceVideo:
         }
         fw = open(file_path, 'w')
         json.dump(result, fw, indent=2)
-        
+
+def getNearestValue(time_list, num):
+    idx = np.abs(np.asarray(time_list) - num).argmin()
+    return time_list[idx], idx
+
+# SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=ZfICRzbt-ZY'
+# test_video = visbeat.PullVideo(source_location = SOURCE_VIDEO_URL)
+# # a = test_video.getFeature('impact_envelope')
+# # print(len(a))
+# # print(test_video.sampling_rate)
+# # for index, value in enumerate(a):
+# #     plt.plot(index, value, marker='.')
+# # plt.savefig('a.png')
+# source_video = DanceVideo(test_video)
+# results = source_video.extractVisualBeatsData()
+# audio_beats = test_video.audio.getBeatEvents()
+# time_list = []
+
+# print test_video.getDuration()
+# for result in results:
+#     time_list.append(result.start)
+#     print result.start
+# for audio_beat in audio_beats:
+#     print audio_beat.start, getNearestValue(time_list, audio_beat.start)
+
+# print len(audio_beats), len(results)

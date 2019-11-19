@@ -3,6 +3,7 @@ import os
 import subprocess
 import json
 import numpy as np
+import visbeat
 
 class DanceMusic:
     def __init__(self, target_video):
@@ -23,6 +24,7 @@ class DanceMusic:
         os.chdir(current_dir)
         if not os.path.exists(self.audio_path):
             cmd = "ffmpeg -i '" + file_path + "' -ac 2 -ar 44100 -b:a 128K -f mp3 " + self.audio_path
+            print cmd
             subprocess.call(cmd, shell=True)
         else:
             print 'Audio File is Exist.'
@@ -32,19 +34,44 @@ class DanceMusic:
         beats_data = []
         for index, beat_data in enumerate(plot_data[1]._xy):
             if(index == 0):
-                beat_datum = {
-                    'start_time': 0,
-                    'beat_time': beat_data[0],
-                    'weight': beat_data[1]
-                }
+                beat_datum = {'start_time': beat_data[0]}
+            elif(index == len(plot_data[1]._xy) - 1):
+                beats_data[index-1]['weight'] = beat_data[1]
+                beats_data[index - 1]['end_time'] = beat_data[0]
+                pass
             else:
-                beat_datum = {
-                    'start_time': beats_data[index - 1]['beat_time'],
-                    'beat_time': beat_data[0],
-                    'weight': beat_data[1]
-                }
+                beats_data[index - 1]['end_time'] = beat_data[0]
+                beats_data[index - 1]['weight'] = beat_data[1]
+                beat_datum = {'start_time': beat_data[0]}
             beats_data.append(beat_datum)
-        return beats_data
+        # beats_data = []
+        # for index, beat_data in enumerate(plot_data[1]._xy):
+        #     beat_datum = {
+        #         'start_time': beat_data[0],
+        #         'weight': beat_data[1]
+        #     }
+        #     beats_data.append(beat_datum)
+        # for index, beat_data in enumerate(plot_data[1]._xy):
+        #     if(index < len(plot_data[1]._xy) - 1):
+        #         beats_data[index]['end_time'] = beats_data[index + 1]['start_time']
+        #     else:
+        #         beats_data[index]['end_time'] = beat_data[1]
+        # for index, beat_data in enumerate(plot_data[1]._xy):
+        #     if(index == 0):
+        #         beat_datum = {
+        #             'start_time': 0,
+        #             'beat_time': beat_data[0],
+        #             'weight': beat_data[1]
+        #         }
+        #     else:
+        #         beat_datum = {
+        #             'start_time': beats_data[index - 1]['beat_time'],
+        #             'beat_time': beat_data[0],
+        #             'weight': beat_data[1]
+        #         }
+        #     beats_data.append(beat_datum)
+        i = self.getStartBeatTime()
+        return beats_data[1:]
 
     def split_list(self, l, n):
         for idx in range(0, len(l), n):
@@ -61,7 +88,7 @@ class DanceMusic:
             beats_average_datum = {
                 'index': i,
                 'start_time': split_beats_data[0]['start_time'],
-                'end_time': split_beats_data[-1]['beat_time'],
+                'end_time': split_beats_data[-1]['end_time'],
                 'abeats': weight_sum/8}
             beats_average_data.append(beats_average_datum)
         return beats_average_data
@@ -81,6 +108,11 @@ class DanceMusic:
             beats_data[idx]['abeats'] = standardization_datum
         return beats_data
 
+    def getStartBeatTime(self):
+        beats_data = self.target_video.audio.getBeatEvents()
+        index = len(beats_data) % 4
+        return index
+
     def dumpDictToJSON8BeatsAverage(self, file_path):
         beats_average_data = self.extractAudioBeatsData8BeatsAverage()
         beats_average_data_result = self.standardizationAudioBeats(beats_data = beats_average_data)
@@ -94,3 +126,10 @@ class DanceMusic:
 
     def test(self):
         self.getMP3Audio(self.file_path)
+
+# SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=8wYzN_O9XlU'
+# test_video = visbeat.PullVideo(source_location = SOURCE_VIDEO_URL)
+# results = test_video.audio.getBeatEvents()
+# for result in results:
+#     print result
+# print len(results)
