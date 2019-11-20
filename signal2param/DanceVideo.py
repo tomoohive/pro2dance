@@ -30,6 +30,7 @@ class DanceVideo:
         os.chdir(current_dir)
         if not os.path.exists(self.png_dir + "/image_1.png"):
             cmd = "ffmpeg -i '" + file_path + "' -vcodec png " + split_dir + "/image_%d.png"
+            print cmd
             subprocess.call(cmd, shell=True)
         else:
             print 'png File is Exist.'   

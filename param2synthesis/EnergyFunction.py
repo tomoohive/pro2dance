@@ -39,7 +39,7 @@ def calculateEnergyFunction(X_audio, Y_video):
     a = E_beat(X_audio, Y_video)
     b = E_pose(Y_video)
     print(a,b)
-    return 10*a+b
+    return a+20*b
 
 # audio_beats, visual_beats = loadJSON('AudioBeatsData8BeatsAverage.json','OptimizedData.json')
 # print(E_beat(audio_beats['beats_data'], visual_beats['beats_data']))
