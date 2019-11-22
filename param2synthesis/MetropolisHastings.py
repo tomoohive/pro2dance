@@ -19,7 +19,7 @@ class MetropolisHastings:
         return json_data
 
     def P(self, e_param):
-        T = 0.1
+        T = 0.5
         return np.exp(-e_param/T)
 
     def setVisualBeatsData(self, Y_video):
@@ -36,7 +36,8 @@ class MetropolisHastings:
         X_video = self.video_data['beats_data']
         X_audio = self.audio_beats_data['beats_data']
         Y_video = self.visual_beats_data['beats_data']
-        beats_data_number = len(X_video)
+        beats_data_number_X = len(X_video)
+        beats_data_number_Y = len(Y_video)
 
         print('-------start-------')
         for iter in range(iteration):
@@ -45,9 +46,9 @@ class MetropolisHastings:
             P0 = self.P(e_param = E0)
             Y_video_dash = copy.deepcopy(Y_video)
             u = np.random.rand()
-            i = np.random.randint(beats_data_number)
-            v = np.random.randint(beats_data_number)
-            j = np.random.randint(beats_data_number)
+            i = np.random.randint(beats_data_number_Y)
+            j = np.random.randint(beats_data_number_Y)
+            v = np.random.randint(beats_data_number_X)
             print('Energy Function:' + str(E0))
             if u < 0.7:
                 Y_video_dash[i] = X_video[v]

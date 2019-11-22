@@ -71,7 +71,7 @@ class DanceMusic:
         #         }
         #     beats_data.append(beat_datum)
         i = self.getStartBeatTime()
-        return beats_data[1:]
+        return beats_data[26:]
 
     def split_list(self, l, n):
         for idx in range(0, len(l), n):

@@ -7,7 +7,7 @@ def loadJSON(audio_json_path, visual_json_path):
     return audio_json_data, visaul_json_data
 
 audio_json_data, visaul_json_data = loadJSON(audio_json_path = 'AudioBeatsData8BeatsAverage.json', 
-                                            visual_json_path = 'MHresult.json')
+                                            visual_json_path = 'RandomData.json')
 
 join_mov = str("")
 

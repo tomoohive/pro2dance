@@ -29,7 +29,7 @@ class DanceVideo:
         self.png_dir = split_dir
         os.chdir(current_dir)
         if not os.path.exists(self.png_dir + "/image_1.png"):
-            cmd = "ffmpeg -i '" + file_path + "' -vcodec png " + split_dir + "/image_%d.png"
+            cmd = "ffmpeg -i \"" + file_path + "\" -vcodec png " + split_dir + "/image_%d.png"
             print cmd
             subprocess.call(cmd, shell=True)
         else:
@@ -69,20 +69,6 @@ class DanceVideo:
             weight = beats_data[self.getNearestValue(time_list, audio_data[i].start)].weight
             setattr(audio_data[i], 'weight', weight)
         return audio_data
-        # setattr(beats_data[0], 'start_frame', 1)
-        # for i in range(len(beats_data)):
-        #     if(i == 0):
-        #         end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
-        #         setattr(beats_data[i], 'end_frame', end_frame)
-        #         setattr(beats_data[i+1], 'start_frame', end_frame + 1)
-        #     elif(i == len(beats_data)-1):
-        #         end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
-        #         setattr(beats_data[i], 'end_frame', end_frame)
-        #     else:
-        #         end_frame = self.getFrameNumber(beats_data[i].start * self.sampling_rate)
-        #         setattr(beats_data[i], 'end_frame', end_frame)
-        #         setattr(beats_data[i+1], 'start_frame', end_frame + 1)
-        # return beats_data
 
     def extractVisualBeatsData(self):
         beats_data = self.source_video.getVisualBeats()
@@ -102,7 +88,6 @@ class DanceVideo:
         for i, split_beats_data in enumerate(splits_beats_data):
             weight_sum = reduce(lambda sum, beat_data: sum + abs(beat_data.weight), split_beats_data, 0)
             beats_average_datum = {
-                'index': i,
                 'frames': split_beats_data[-1].end_frame - split_beats_data[0].start_frame,
                 'start_number': split_beats_data[0].start_frame,
                 'file_path': self.png_dir + '/image_%d.png',
@@ -129,35 +114,8 @@ class DanceVideo:
 
     def dumpDictToJSON8BeatsAverage(self, file_path):
         beats_average_data = self.extractVisualBeatsData8BeatsAverage()
-        beats_average_data_result = self.standardizationVisualBeats(beats_data = beats_average_data)
         result = {
-            'beats_data': beats_average_data_result
+            'beats_data': beats_average_data
         }
         fw = open(file_path, 'w')
         json.dump(result, fw, indent=2)
-
-def getNearestValue(time_list, num):
-    idx = np.abs(np.asarray(time_list) - num).argmin()
-    return time_list[idx], idx
-
-# SOURCE_VIDEO_URL = 'https://www.youtube.com/watch?v=ZfICRzbt-ZY'
-# test_video = visbeat.PullVideo(source_location = SOURCE_VIDEO_URL)
-# # a = test_video.getFeature('impact_envelope')
-# # print(len(a))
-# # print(test_video.sampling_rate)
-# # for index, value in enumerate(a):
-# #     plt.plot(index, value, marker='.')
-# # plt.savefig('a.png')
-# source_video = DanceVideo(test_video)
-# results = source_video.extractVisualBeatsData()
-# audio_beats = test_video.audio.getBeatEvents()
-# time_list = []
-
-# print test_video.getDuration()
-# for result in results:
-#     time_list.append(result.start)
-#     print result.start
-# for audio_beat in audio_beats:
-#     print audio_beat.start, getNearestValue(time_list, audio_beat.start)
-
-# print len(audio_beats), len(results)
